@@ -54,7 +54,7 @@ class DriveDataLoader:
 
         firstWrite = True
 
-        for chunk in pd.read_csv(self.extracted_csv_path, chunksize=chunksize):
+        for chunk in pd.read_csv(self.extractedCSVPath, chunksize=chunksize):
             table = pa.Table.from_pandas(chunk)
 
             if firstWrite:
