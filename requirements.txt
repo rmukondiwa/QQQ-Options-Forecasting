@@ -1,0 +1,3 @@
+pandas
+google-colab
+numpy

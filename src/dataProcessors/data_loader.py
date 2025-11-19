@@ -16,6 +16,26 @@ class DriveDataLoader:
         self.zipName = zipName
 
         # Path inside Google Drive to the zip file
-        self.zipPath = f"/content/drive/MyDrive/{self.driveFolder}/{self.zipName}"
+        self.drivePath = f"/content/drive/MyDrive/{self.driveFolder}"
+        self.zipPath = f"{self.drivePath}/{self.zipName}"
         self.extractedCSVPath = None
 
+    def mountDrive(self):
+        """Mounts Google Drive once"""
+        drive.mount('/content/drive')
+        print("Google Drive mounted successfully.")
+
+    def unzipIfNeeded(self):
+        """Unzips the file if it hasn't been unzipped yet."""
+        zipFilePath = self.zipPath
+
+        with ZipFile(zipFilePath, 'r') as zip:
+            csvName = zip.namelist()[0]
+            self.extractedCSVPath = f"{self.drivePath}/{csvName}"
+
+            if not os.path.exists(self.extractedCSVPath):
+                print(f"Extracting {csvName} from zip...")
+                zip.extract(csvName, self.drivePath)
+            else:
+                print(f"{csvName} already extracted.")
+        return self.extractedCSVPath
