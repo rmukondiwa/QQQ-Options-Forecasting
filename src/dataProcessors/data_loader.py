@@ -52,16 +52,19 @@ class DriveDataLoader:
         
         print("Converting CSV to Parquet in chunks...")
 
-        firstWrite = True
+        writer = None
 
         for chunk in pd.read_csv(self.extractedCSVPath, chunksize=chunksize):
             table = pa.Table.from_pandas(chunk)
 
-            if firstWrite:
-                pq.write_table(table, self.parquetPath)
-                firstWrite = False
-            else:
-                pq.write_table(table, self.parquetPath, append=True)
+            if writer is None:
+                # First chunk → create writer
+                writer = pq.ParquetWriter(self.parquetPath, table.schema)
+
+            writer.write_table(table)
+
+            if writer:
+                writer.close()
 
         print("Finished writing Parquet: {self.parquetPath}")
         return self.parquetPath
